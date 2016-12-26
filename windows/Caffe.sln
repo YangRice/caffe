@@ -69,6 +69,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "upgrade_net_proto_text", "u
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "upgrade_solver_proto_text", "upgrade_solver_proto_text\upgrade_solver_proto_text.vcxproj", "{E1185C4E-1AEA-4E0E-BE85-2671E065016A}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "wincaffe", "wincaffe\wincaffe.vcxproj", "{1F280B2C-6434-4305-847E-10D942CF3093}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -139,6 +141,10 @@ Global
 		{E1185C4E-1AEA-4E0E-BE85-2671E065016A}.Debug|x64.Build.0 = Debug|x64
 		{E1185C4E-1AEA-4E0E-BE85-2671E065016A}.Release|x64.ActiveCfg = Release|x64
 		{E1185C4E-1AEA-4E0E-BE85-2671E065016A}.Release|x64.Build.0 = Release|x64
+		{1F280B2C-6434-4305-847E-10D942CF3093}.Debug|x64.ActiveCfg = Debug|x64
+		{1F280B2C-6434-4305-847E-10D942CF3093}.Debug|x64.Build.0 = Debug|x64
+		{1F280B2C-6434-4305-847E-10D942CF3093}.Release|x64.ActiveCfg = Release|x64
+		{1F280B2C-6434-4305-847E-10D942CF3093}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

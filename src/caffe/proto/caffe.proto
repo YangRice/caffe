@@ -600,7 +600,7 @@ message ConvolutionParameter {
     CAFFE = 1;
     CUDNN = 2;
   }
-  optional Engine engine = 15 [default = DEFAULT];
+  optional Engine engine = 15 [default = CAFFE];
 
   // The axis to interpret as "channels" when performing convolution.
   // Preceding dimensions are treated as independent inputs;
@@ -870,7 +870,7 @@ message LRNParameter {
     CAFFE = 1;
     CUDNN = 2;
   }
-  optional Engine engine = 6 [default = DEFAULT];
+  optional Engine engine = 6 [default = CAFFE];
 }
 
 message MemoryDataParameter {
@@ -918,7 +918,7 @@ message PoolingParameter {
     CAFFE = 1;
     CUDNN = 2;
   }
-  optional Engine engine = 11 [default = DEFAULT];
+  optional Engine engine = 11 [default = CAFFE];
   // If global_pooling then it will pool over the size of the bottom by doing
   // kernel_h = bottom->height and kernel_w = bottom->width
   optional bool global_pooling = 12 [default = false];
@@ -1012,7 +1012,7 @@ message ReLUParameter {
     CAFFE = 1;
     CUDNN = 2;
   }
-  optional Engine engine = 2 [default = DEFAULT];
+  optional Engine engine = 2 [default = CAFFE];
 }
 
 message ReshapeParameter {
@@ -1133,7 +1133,7 @@ message SigmoidParameter {
     CAFFE = 1;
     CUDNN = 2;
   }
-  optional Engine engine = 1 [default = DEFAULT];
+  optional Engine engine = 1 [default = CAFFE];
 }
 
 message SliceParameter {
@@ -1161,7 +1161,7 @@ message SoftmaxParameter {
     CAFFE = 1;
     CUDNN = 2;
   }
-  optional Engine engine = 1 [default = DEFAULT];
+  optional Engine engine = 1 [default = CAFFE];
 
   // The axis along which to perform the softmax -- may be negative to index
   // from the end (e.g., -1 for the last axis).
@@ -1175,7 +1175,7 @@ message TanHParameter {
     CAFFE = 1;
     CUDNN = 2;
   }
-  optional Engine engine = 1 [default = DEFAULT];
+  optional Engine engine = 1 [default = CAFFE];
 }
 
 // Message that stores parameters used by TileLayer
@@ -1279,7 +1279,7 @@ message SPPParameter {
     CAFFE = 1;
     CUDNN = 2;
   }
-  optional Engine engine = 6 [default = DEFAULT];
+  optional Engine engine = 6 [default = CAFFE];
 }
 
 // DEPRECATED: use LayerParameter.

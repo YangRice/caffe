@@ -21,7 +21,7 @@ struct CaffeBlobSize
 	int channels, width, height;
 };
 
-WINCAFFE_API CaffeNet NewClassificationNet(const char *netParam, const char *trainedModel);
+WINCAFFE_API CaffeNet NewClassificationNet(const char *netParam, const char *trainedModel, const char *meanFile);
 WINCAFFE_API void GetInputSize(CaffeNet net, CaffeBlobSize *inputSize);
 WINCAFFE_API void GetOutputSize(CaffeNet net, CaffeBlobSize *outputSize);
 WINCAFFE_API void RunClassificationNet(CaffeNet net, unsigned char *img, float *prob);

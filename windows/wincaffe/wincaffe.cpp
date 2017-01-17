@@ -55,8 +55,14 @@ CaffeNet NewClassificationNet(const char *netParam, const char *trainedModel, co
 	if (meanFile != nullptr)
 	{
 		BlobProto blob_proto;
-		ReadProtoFromBinaryFile(meanFile, &blob_proto);
-		meanNet->mean.FromProto(blob_proto);
+		if (ReadProtoFromBinaryFile(meanFile, &blob_proto))
+		{
+			meanNet->mean.FromProto(blob_proto);
+		}
+		else
+		{
+			std::cerr << "[wincaffe.dll] Can't read meanfile: " << string(meanFile) << std::endl;
+		}
 	}
 
 	return meanNet;
@@ -108,7 +114,7 @@ void RunClassificationNet(CaffeNet net, BYTE *bmp, float *prob)
 	{
 		float *inputData = inputBlob->mutable_cpu_data();
 		float *meanData = meanBlob.mutable_cpu_data();
-		for (auto i = 0; i < inputBlob->count(); i++)
+		for (auto i = 0; i < inputBlob->count(); i++, inputData++, meanData++)
 		{
 			inputData[0] -= meanData[0];
 		}

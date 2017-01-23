@@ -13,6 +13,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Header Files\faster r-cnn">
+      <UniqueIdentifier>{5ee05b60-6808-402f-aed7-b3426c6167fb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\faster r-cnn">
+      <UniqueIdentifier>{7386a0db-b13b-43e0-bcf1-76d5c3907e05}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -27,6 +33,15 @@
     <ClInclude Include="wincaffe.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="faster r-cnn\misc.hpp">
+      <Filter>Header Files\faster r-cnn</Filter>
+    </ClInclude>
+    <ClInclude Include="faster r-cnn\nms.hpp">
+      <Filter>Header Files\faster r-cnn</Filter>
+    </ClInclude>
+    <ClInclude Include="faster r-cnn\proposal_layer.hpp">
+      <Filter>Header Files\faster r-cnn</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -37,6 +52,12 @@
     </ClCompile>
     <ClCompile Include="dllmain.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="faster r-cnn\misc.cpp">
+      <Filter>Source Files\faster r-cnn</Filter>
+    </ClCompile>
+    <ClCompile Include="faster r-cnn\proposal_layer.cpp">
+      <Filter>Source Files\faster r-cnn</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -409,6 +409,7 @@ message LayerParameter {
   optional WindowDataParameter window_data_param = 129;
   optional MILDataParameter mil_data_param = 0x004d4944; //"MID"
   optional MILParameter mil_param = 0x004d494c; //"MIL"
+  optional ProposalParameter proposal_param = 8266713;
 }
 
 // Message that stores parameters used to apply transformation
@@ -1152,6 +1153,10 @@ message SmoothL1LossParameter {
   //   0.5 * (sigma * x) ** 2    -- if x < 1.0 / sigma / sigma
   //   |x| - 0.5 / sigma / sigma -- otherwise
   optional float sigma = 1 [default = 1];
+}
+
+message ProposalParameter {
+  optional uint32 feat_stride = 1 [default = 16];
 }
 
 // Message that stores parameters used by SoftmaxLayer, SoftmaxWithLossLayer

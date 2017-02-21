@@ -15,6 +15,7 @@
 
 typedef void *CaffeNet;
 typedef void *FasterRCNNNet;
+typedef void *FCNNet;
 
 struct CaffeBlobSize
 {
@@ -34,9 +35,15 @@ WINCAFFE_API void DeleteClassificationNet(CaffeNet net);
 
 WINCAFFE_API FasterRCNNNet NewFasterRCNNNet(const char *netParam, const char *trainedModel);
 WINCAFFE_API void GetFasterRCNNNetBlobSize(FasterRCNNNet net, CaffeBlobSize *blobSize, const char *blobName);
-WINCAFFE_API int RunFasterRCNNNet(FasterRCNNNet net, uchar *img, int width, int height, float nms_threshold);
+WINCAFFE_API int RunFasterRCNNNet(FasterRCNNNet net, unsigned char *img, int width, int height, float nms_threshold);
 WINCAFFE_API bool GetFasterRCNNScoreAndBox(FasterRCNNNet net, int *labels, float *scores, FasterRCNNBox *boxes, int count);
 WINCAFFE_API void DeleteFasterRCNNNet(FasterRCNNNet net);
+
+WINCAFFE_API FCNNet NewFCNNet(const char *netParam, const char *trainedModel, const char *meanFile);
+WINCAFFE_API void GetFCNNetBlobSize(FCNNet net, CaffeBlobSize *blobSize, const char *blobName);
+WINCAFFE_API void RunFCNNet(FCNNet net, unsigned char *img, int width, int height);
+WINCAFFE_API bool GetFCNNetOutput(FCNNet net, int label, float *heatmap, int width, int height);
+WINCAFFE_API void DeleteFCNNet(FCNNet net);
 
 WINCAFFE_API void SetCPUMode();
 WINCAFFE_API void SetGPUMode(int deviceid);

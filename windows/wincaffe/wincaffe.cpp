@@ -267,3 +267,73 @@ void DeleteFasterRCNNNet(FasterRCNNNet net)
 {
 	delete net;
 }
+
+FCNNet NewFCNNet(const char *netParam, const char *trainedModel, const char *meanFile)
+{
+	return NewClassificationNet(netParam, trainedModel, meanFile);
+}
+
+void GetFCNNetBlobSize(FCNNet net, CaffeBlobSize *blobSize, const char *blobName)
+{
+	auto caffenet = static_cast<MeanNet *>(net)->net;
+
+	const auto blob = caffenet->blob_by_name(blobName);
+	blobSize->channels = blob->channels();
+	blobSize->height = blob->height();
+	blobSize->width = blob->width();
+}
+
+void RunFCNNet(FCNNet net, unsigned char *img, int width, int height)
+{
+	auto caffenet = static_cast<MeanNet *>(net)->net;
+	auto *inputBlob = caffenet->input_blobs()[0];
+	auto *outputBlob = caffenet->output_blobs()[0];
+
+	Mat im(height, width, CV_8UC3, img);
+	inputBlob->Reshape(1, 3, height, width);
+	Mat2Blob(im, *inputBlob);
+
+	Blob<float> &meanBlob = static_cast<MeanNet *>(net)->mean;
+	if (meanBlob.count() > 0)
+	{
+		float *inputData = inputBlob->mutable_cpu_data();
+		float *meanData = meanBlob.mutable_cpu_data();
+		for (auto i = 0; i < inputBlob->count(); i++, inputData++, meanData++)
+		{
+			inputData[0] -= meanData[0];
+		}
+	}
+
+	caffenet->Forward();
+}
+
+bool GetFCNNetOutput(FCNNet net, int label, float *heatmap, int width, int height)
+{
+	auto caffenet = static_cast<MeanNet *>(net)->net;
+	const auto blob = caffenet->output_blobs()[0];
+	float *data = blob->mutable_cpu_data();
+	int channelSize = blob->width() * blob->height();
+
+	Mat result(blob->height(), blob->width(), CV_32FC1, data + channelSize * label);
+	Mat output(height, width, CV_32FC1, heatmap);
+	if (output.rows >= result.rows && output.cols >= result.cols)
+	{
+		for (int i = 0; i < result.rows; i++)
+		{
+			memcpy(output.data + i * output.step.p[0],
+				result.data + i * result.step.p[0],
+				result.step.p[0]);
+		}
+		return true;
+	}
+	else
+	{
+		std::cerr << "input size(" << output.size() << ") != output size(" << result.size() << ")" << std::endl;
+		return false;
+	}
+}
+
+void DeleteFCNNet(FCNNet net)
+{
+	delete net;
+}

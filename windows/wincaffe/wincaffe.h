@@ -42,7 +42,8 @@ WINCAFFE_API void DeleteFasterRCNNNet(FasterRCNNNet net);
 WINCAFFE_API FCNNet NewFCNNet(const char *netParam, const char *trainedModel, const char *meanFile);
 WINCAFFE_API void GetFCNNetBlobSize(FCNNet net, CaffeBlobSize *blobSize, const char *blobName);
 WINCAFFE_API void RunFCNNet(FCNNet net, unsigned char *img, int width, int height);
-WINCAFFE_API bool GetFCNNetOutput(FCNNet net, int label, float *heatmap, int width, int height);
+WINCAFFE_API bool GetFCNNetProbabilities(FCNNet net, int label, float *heatmap, int width, int height);
+WINCAFFE_API bool GetFCNNetSegmentation(FCNNet net, int *map, int width, int height);
 WINCAFFE_API void DeleteFCNNet(FCNNet net);
 
 WINCAFFE_API void SetCPUMode();

@@ -177,10 +177,6 @@ namespace caffe {
 	}
 
 
-#ifdef CPU_ONLY
-	STUB_GPU(ProposalLayer);
-#endif
-
 	INSTANTIATE_CLASS(ProposalLayer);
 	REGISTER_LAYER_CLASS(Proposal);
 

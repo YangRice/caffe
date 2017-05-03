@@ -3,43 +3,10 @@
 
 #include "stdafx.h"
 #include "wincaffe.h"
-#include <iostream>
 #include <memory>
 
 using namespace caffe;
 using namespace cv;
-
-class CaffeInit
-{
-public:
-	CaffeInit()
-	{
-		google::InitGoogleLogging({ "wincaffe.dll" });
-	}
-};
-static std::unique_ptr<CaffeInit> caffeInit(new CaffeInit());
-
-class MeanNet
-{
-public:
-	std::shared_ptr<Net<float>> net;
-	Blob<float> mean;
-	MeanNet(const std::string &param_file) : net(new Net<float>(param_file, TEST)) {}
-};
-
-inline void Mat2Blob(const Mat& img, Blob<float> &blob, const float scale = 1.0)
-{
-	vector<Mat> splitted;
-	int channelSize = blob.width() * blob.height();
-	float *data = blob.mutable_cpu_data();
-
-	split(img, splitted);
-	for (auto i = 0; i < blob.channels(); i++)
-	{
-		Mat channelImg(blob.height(), blob.width(), CV_32FC1, data + channelSize * i);
-		splitted[i].convertTo(channelImg, CV_32FC1, scale);
-	}
-}
 
 // This is an example of an exported function.
 CaffeNet NewClassificationNet(const char *netParam, const char *trainedModel, const char *meanFile)
@@ -101,7 +68,10 @@ void RunClassificationNet(CaffeNet net, BYTE *bmp, float *prob)
 	auto *outputBlob = caffenet->output_blobs()[0];
 
 	Mat img(inputBlob->height(), inputBlob->width(), CV_8UC3, bmp);
-	//resize(img, img, Size(inputBlob->width(), inputBlob->height()));
+	if (DebugFlagEnabled())
+	{
+		imwrite(DEBUG_IMAGE, img);
+	}
 
 	Mat2Blob(img, *inputBlob);
 	Blob<float> &meanBlob = static_cast<MeanNet *>(net)->mean;
@@ -125,15 +95,6 @@ void DeleteClassificationNet(CaffeNet net)
 {
 	delete net;
 }
-
-class _FasterRCNNNet
-{
-public:
-	std::shared_ptr<Net<float>> net;
-	vector<int> labels;
-	vector<float> scores;
-	vector<Box<float>> boxes;
-};
 
 FasterRCNNNet NewFasterRCNNNet(const char *netParam, const char *trainedModel)
 {
@@ -164,6 +125,10 @@ int RunFasterRCNNNet(FasterRCNNNet net, uchar *bmp, int width, int height, float
 	Mat im(height, width, CV_8UC3, bmp);
 	data->Reshape(1, 3, height, width);
 	Mat2Blob(im, *data);
+	if (DebugFlagEnabled())
+	{
+		imwrite(DEBUG_IMAGE, im);
+	}
 
 	info->mutable_cpu_data()[0] = static_cast<float>(height);
 	info->mutable_cpu_data()[1] = static_cast<float>(width);
@@ -186,7 +151,7 @@ int RunFasterRCNNNet(FasterRCNNNet net, uchar *bmp, int width, int height, float
 	boxes.resize(0);
 
 	// unscale back to raw image space
-	for (int i = 0; i<rois->num(); i++)
+	for (int i = 0; i < rois->num(); i++)
 	{
 		const auto &x1 = rois->cpu_data()[rois->offset(i, 1, 0, 0)];
 		const auto &y1 = rois->cpu_data()[rois->offset(i, 2, 0, 0)];
@@ -292,6 +257,10 @@ void RunFCNNet(FCNNet net, unsigned char *img, int width, int height)
 	Mat im(height, width, CV_8UC3, img);
 	inputBlob->Reshape(1, 3, height, width);
 	Mat2Blob(im, *inputBlob);
+	if (DebugFlagEnabled())
+	{
+		imwrite(DEBUG_IMAGE, im);
+	}
 
 	Blob<float> &meanBlob = static_cast<MeanNet *>(net)->mean;
 	if (meanBlob.count() > 0)
@@ -307,7 +276,7 @@ void RunFCNNet(FCNNet net, unsigned char *img, int width, int height)
 	caffenet->Forward();
 }
 
-bool GetFCNNetOutput(FCNNet net, int label, float *heatmap, int width, int height)
+bool GetFCNNetProbabilities(FCNNet net, int label, float *heatmap, int width, int height)
 {
 	auto caffenet = static_cast<MeanNet *>(net)->net;
 	const auto blob = caffenet->output_blobs()[0];
@@ -316,7 +285,7 @@ bool GetFCNNetOutput(FCNNet net, int label, float *heatmap, int width, int heigh
 
 	Mat result(blob->height(), blob->width(), CV_32FC1, data + channelSize * label);
 	Mat output(height, width, CV_32FC1, heatmap);
-	if (output.rows >= result.rows && output.cols >= result.cols)
+	if (output.rows == result.rows && output.cols == result.cols)
 	{
 		for (int i = 0; i < result.rows; i++)
 		{
@@ -328,7 +297,44 @@ bool GetFCNNetOutput(FCNNet net, int label, float *heatmap, int width, int heigh
 	}
 	else
 	{
-		std::cerr << "input size(" << output.size() << ") != output size(" << result.size() << ")" << std::endl;
+		std::cerr << "input size " << output.size() << " != output size " << result.size() << "" << std::endl;
+		return false;
+	}
+}
+
+bool GetFCNNetSegmentation(FCNNet net, int *map, int width, int height)
+{
+	auto caffenet = static_cast<MeanNet *>(net)->net;
+	const auto blob = caffenet->output_blobs()[0];
+	float *data = blob->mutable_cpu_data();
+	
+	Mat output(height, width, CV_32SC1, map);
+	Mat scores = Mat::zeros(height, width, CV_32FC1);
+	if (output.rows == blob->height() && output.cols == blob->width())
+	{
+		float *src = data;
+		for (int k = 0; k < blob->channels(); k++)
+		{
+			int *dst = output.ptr<int>();
+			float *s = scores.ptr<float>();
+			for (int i = 0; i < blob->height(); i++)
+			{
+				for (int j = 0; j < blob->width(); j++, src++, dst++, s++)
+				{
+					if (src[0] > s[0])
+					{
+						s[0] = src[0];
+						dst[0] = k;
+					}
+				}
+			}
+		}
+		return true;
+	}
+	else
+	{
+		std::cerr << "input size " << output.size() << " != output size " 
+			<< "[" << width << " x " << height << "]" << std::endl;
 		return false;
 	}
 }

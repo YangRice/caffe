@@ -70,7 +70,7 @@ void RunClassificationNet(CaffeNet net, BYTE *bmp, float *prob)
 	Mat img(inputBlob->height(), inputBlob->width(), CV_8UC3, bmp);
 	if (DebugFlagEnabled())
 	{
-		imwrite(DEBUG_IMAGE, img);
+		OutputDebugImage(img);
 	}
 
 	Mat2Blob(img, *inputBlob);
@@ -127,7 +127,7 @@ int RunFasterRCNNNet(FasterRCNNNet net, uchar *bmp, int width, int height, float
 	Mat2Blob(im, *data);
 	if (DebugFlagEnabled())
 	{
-		imwrite(DEBUG_IMAGE, im);
+		OutputDebugImage(im);
 	}
 
 	info->mutable_cpu_data()[0] = static_cast<float>(height);
@@ -259,7 +259,7 @@ void RunFCNNet(FCNNet net, unsigned char *img, int width, int height)
 	Mat2Blob(im, *inputBlob);
 	if (DebugFlagEnabled())
 	{
-		imwrite(DEBUG_IMAGE, im);
+		OutputDebugImage(im);
 	}
 
 	Blob<float> &meanBlob = static_cast<MeanNet *>(net)->mean;

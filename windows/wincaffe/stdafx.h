@@ -9,6 +9,7 @@
 #include "caffe/caffe.hpp"
 #include <sys/stat.h>
 #include <iostream>
+#include <chrono>
 
 #include "faster r-cnn\misc.hpp"
 #include "faster r-cnn\proposal_layer.hpp"
@@ -19,7 +20,6 @@
 #include <windows.h>
 
 #define DEBUG_FLAG	"wincaffe.debug"
-#define DEBUG_IMAGE	"wincaffe.jpg"
 
 class CaffeInit
 {
@@ -74,4 +74,15 @@ inline bool DebugFlagEnabled()
 {
 	static bool debugFlag = FileExist(DEBUG_FLAG);
 	return debugFlag;
+}
+
+
+inline void OutputDebugImage(cv::Mat img)
+{
+	std::stringstream filename;
+
+	filename << "wincaffe"
+		<< std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count()
+		<< ".jpg";
+	imwrite(filename.str(), img);
 }

@@ -1,3 +1,5 @@
+#pragma once
+
 // The following ifdef block is the standard way of creating macros which make exporting 
 // from a DLL simpler. All files within this DLL are compiled with the FACEAGEDLL_EXPORTS
 // symbol defined on the command line. This symbol should not be defined on any project
@@ -10,7 +12,6 @@
 #define WINCAFFE_API __declspec(dllimport)
 #endif
 
-#
 #include <opencv2\opencv.hpp>
 
 typedef void *CaffeNet;
